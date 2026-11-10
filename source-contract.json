@@ -1,0 +1,10 @@
+{
+  "phases": [
+    "base",
+    "stale-list",
+    "wrong-detail"
+  ],
+  "storage": "空间选择位于各BrowserContext隔离的localStorage",
+  "stale-list": "导航空间与列表空间不同",
+  "wrong-detail": "导航与列表正确，详情来自另一空间"
+}

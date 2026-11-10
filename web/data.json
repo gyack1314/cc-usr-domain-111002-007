@@ -1,0 +1,19 @@
+{
+  "spaces": [
+    {
+      "id": "A",
+      "name": "甲公司"
+    },
+    {
+      "id": "B",
+      "name": "乙公司"
+    }
+  ],
+  "credentials": {
+    "user": "demo-user",
+    "scope": [
+      "A",
+      "B"
+    ]
+  }
+}
