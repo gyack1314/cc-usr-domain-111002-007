@@ -1,0 +1,14 @@
+{
+  "user": "demo-user",
+  "base_url": "http://127.0.0.1:8090",
+  "allowed_spaces": ["A", "B"],
+  "workspaces": [
+    {"id": "A", "categories": ["资料"]},
+    {"id": "B", "categories": ["资料"]}
+  ],
+  "max_contexts": 2,
+  "headless": true,
+  "output_dir": "outputs",
+  "state_dir": "state",
+  "resume": false
+}

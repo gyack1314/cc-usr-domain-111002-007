@@ -18,11 +18,27 @@ python -m portal --port 8090
 
 运维入口 GET `/__state` 查看来源动作记录，POST `/__control` 用 JSON 设置 phase、version、confirmed。它们只用于本地来源调度，接入程序的正常操作不能借用运维入口取得业务数据或完成授权。GET `/api/runtime` 和 POST `/api/action` 是门户页面内部协议。
 
+## 采集组件
+
+`collector/` 是业务采集端，按计划逐空间采集，只使用门户公开页面，不接触运维入口：
+
+- 计划（`config/plan.json`）明确给出用户配置、允许的空间编号与资料类别，每个空间的结果独立存放在 `outputs/<空间>/`。
+- 每个空间使用独立 BrowserContext，登录材料只来自运行配置或本空间自己的状态文件（`state/<空间>/`，路径与空间不符即拒绝加载），不向别的空间复制 cookie 或存储状态。
+- 切换空间只通过门户公开的选择界面，不修改 localStorage；空间标识必须在导航、列表、详情三处一致且属于计划允许集合才接收资料，新标签子页同样核对，地址栏参数不作为身份依据。
+- 业务主键 = 空间 + record-id；发现空间不一致即保留证据到 `outputs/<空间>/quarantine/` 并停止该空间链，其他空间继续，异常资料不进入正式结果。
+- `max_contexts` 限制上下文并发数；上下文只属于本空间，关闭前先把在途新标签处理完，不会归到下一个空间。日志不保存会话秘密。
+
+```sh
+python -m portal --port 8090          # 先启动门户
+python -m collector --plan config/plan.json
+python -m collector.demo              # 端到端演示：双上下文存储隔离 + 错误详情/旧列表隔离
+```
+
 ## 验证与容器
 
 ```sh
 python -m unittest discover -s tests -v
-python -m compileall -q portal tests
+python -m compileall -q portal tests collector
 docker build -t workspace-isolation-portal .
 docker run --rm --network none --shm-size=1g workspace-isolation-portal
 ```
